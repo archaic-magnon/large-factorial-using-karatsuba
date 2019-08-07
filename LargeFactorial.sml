@@ -7,14 +7,28 @@ Used for raising exception for invalid input to factorial function
 exception Invalid_Input_exception of string
 
 
+(*----------------------------------------------------------------------------------
+val validateInput = fn : string -> bool
+check if input is valid or not
+------------------------------------------------------------------------------------*)
+fun validateInput(s: string) = 
+	if s = "" then false
+	(*
+		check for each character in string if it is a digit or not
+	*)
+	else 
+		List.all (Char.isDigit) (explode s)
+
+
+
 
 (*----------------------------------------------------------------------------------
-val fromString = fn : string -> int list 
+val fromStringHelper = fn : string -> int list 
 Converts input string to int list where each element of list is in 10^4 base
 ------------------------------------------------------------------------------------*)
-fun fromString(s: string) = 
+fun fromStringHelper(s: string) = 
 	if s = "" then []
-	else 
+	else
 		if String.size(s) >= 4 then
 			let
 				(*
@@ -29,18 +43,34 @@ fun fromString(s: string) =
 			 		if size of s is multiple of 4 then split 1st 4 from string and cons to remaining list
 			 	*)
 			 	if msb_size = 0 then
-			 		valOf(Int.fromString(String.extract(s,0, SOME 4))) :: fromString(String.extract(s,4, NONE))
+			 		valOf(Int.fromString(String.extract(s,0, SOME 4))) :: fromStringHelper(String.extract(s,4, NONE))
 			 	(*
 			 		if size of s is not multiple of 4 then cons msb digit to remaining list
 			 	*)
 			 	else 
-			 		valOf(Int.fromString(s0)) :: fromString(s1)	
+			 		valOf(Int.fromString(s0)) :: fromStringHelper(s1)	
 			end 
 		(*
 			if length of s is less than 4 then simply make it list
 		*)
 		else
 			valOf(Int.fromString(s))::[];
+
+
+(*----------------------------------------------------------------------------------
+val fromString = fn : string -> int list 
+Converts input string to int list where each element of list is in 10^4 base 
+by taking help of fromStringHelper function
+------------------------------------------------------------------------------------*)
+fun fromString(s: string) = 
+	(*
+		if input is valid then covert to int list
+		else raise exception
+	*)
+	if validateInput s then 
+		fromStringHelper(s)
+	else
+		raise Invalid_Input_exception "Invalid input"
 
 
 (*----------------------------------------------------------------------------------
@@ -135,18 +165,6 @@ fun toString(l: int list) =
 
 
 
-
-(*----------------------------------------------------------------------------------
-val validateInput = fn : string -> bool
-check if input is valid or not
-------------------------------------------------------------------------------------*)
-fun validateInput(s: string) = 
-	if s = "" then false
-	(*
-		check for each character in string if it is a digit or not
-	*)
-	else 
-		List.all (Char.isDigit) (explode s)
 
 
 
@@ -444,7 +462,7 @@ fun karatsuba(n1: int list) =
 						x.y = x1y1B2m + (x1y0 + x0y1)Bm + x0y0
 
 						z2 = x1y1
-						z1 = x1y0 + x0y1 =  sgn(x0 - x1):sgn(y1 - y0).|x0 - x1|.|y1 - y0| + x1y1 + x0y0
+						z1 = x1y0 + x0y1 =  sgn(x0 - x1).sgn(y1 - y0).|x0 - x1|.|y1 - y0| + x1y1 + x0y0
 						z0 = x0y0
 
 						xy = z2B2m + z1Bm + z0
@@ -452,11 +470,20 @@ fun karatsuba(n1: int list) =
 					*)
 					val mid = Real.ceil(Real.fromInt( minimum( countDigits(n1), countDigits(n2) ) ) / 2.0);
 
-					val x1 = #1 (splitList(n1, mid));
+					val x = splitList(n1, mid);
+					val y = splitList(n2, mid)
+
+					val x1 = #1 x;
+					val x0 = #2 x;
+
+					val y1 = #1 y;
+					val y0 = #2 y;
+
+					(*val x1 = #1 (splitList(n1, mid));
 					val x0 = #2 (splitList(n1, mid));
 
 					val y1 = #1 (splitList(n2, mid));
-					val y0 = #2 (splitList(n2, mid));
+					val y0 = #2 (splitList(n2, mid));*)
 
 					val z0 = karatsuba x0 y0
 					val z2 = karatsuba	x1 y1
@@ -497,6 +524,7 @@ fun isLessThanEqualTo1(l: int list) =
 	 	else
 	 		false
 	 end 	
+
 
 
 (*----------------------------------------------------------------------------------
@@ -589,5 +617,5 @@ This function is not used
 	else
 		factorialbasic_tr(n-1, n*result)
 
-			*)
+*)
 			
