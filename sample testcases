@@ -1,0 +1,25 @@
+Sample Testcases
+
+SML
+
+Input: toString (karatsuba (fromString "1234567890") (fromString "1234567890"));
+Output: val it = "1524157875019052100" : string
+
+Input: toString (karatsuba (fromString "1234556789123456789") (fromString "123456789"));
+Output: val it = "152414417023332099750190521" : string
+
+Input: factorial "50";
+Output: val it = "30414093201713378043612608166064768844377641568960512000000000000" : string
+
+
+
+OCaml
+
+Input: toString (karatsuba (fromString "1234567890") (fromString "1234567890"));;
+Output: - : string = "1524157875019052100"
+
+Input: toString (karatsuba (fromString "1234556789123456789") (fromString "123456789"));;
+Output: - : string = "152414417023332099750190521"
+
+Input: factorial "50";;
+Output: - : string = "30414093201713378043612608166064768844377641568960512000000000000"
